@@ -1,7 +1,8 @@
 #include <SPI.h>
-#include <nRF24L01p.h>
+#include "nRF24L01.h"
+#include "RF24.h"
 
-nRF24L01p receiver(7,8);//CSN,CE
+RF24 receiver(7,8);//CSN,CE
 String message;
 //------------------------
 String mensagemReceptor;
