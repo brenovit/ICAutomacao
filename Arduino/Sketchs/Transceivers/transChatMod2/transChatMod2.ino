@@ -7,7 +7,7 @@ RF24 radio(7, 8);
 
 int msg[1];
 
-int arduino = 1;
+int arduino = 0;
 byte endereco[][6] = {"COM4", "COM5"};
 
 void setup() {
@@ -38,7 +38,7 @@ void loop() {
       printf("Falha ao enviar a mensagem!\n");
     }
     texto = "";
-    if (!receberMensagem()) {
+    if(!receberMensagem()){
       printf("Falha ao receber a mensagem!\n");
     }
   }
@@ -70,32 +70,28 @@ void loop() {
     radio.read(&dadoRecebido, sizeof(dadoRecebido));
     printf("Enviei: %c e Recebi: %c\n", letra, dadoRecebido);
   }
-  }*/
+}*/
 
 int enviarMensagem(String message) {
   int msgSize = message.length();
-  ///printf("Cheguei no envia\n");
+  printf("entrei no enviar\n");
   for (int i = 0; i < msgSize; i++) {
-    //printf("Tou no for\n");
     int charToSend[1];
     charToSend[0] = message.charAt(i);
     radio.stopListening();
-    radio.write(charToSend, sizeof(charToSend));
+    radio.write(charToSend, sizeof(charToSend));       
   }
-  //printf("Sai do for\n");
+  printf("sair do for\n");
   msg[0] = 2;
-  //printf("Vou enviar o msg\n");
-  radio.write(msg, sizeof(msg));
-  //printf("Enviei o msg\n");
-  radio.powerDown();
-  //printf("Abaixei a energia\n");
-  delay(1000);
-  radio.powerUp();
-  //printf("Auemntei a energia\n");
-  Serial.println("ME: " + message);
-  //printf("Vou sair do enviar\n");
-  
-  return 1;
+  if (radio.write(msg, sizeof(msg))) {
+    printf("entrei no if\n");
+    radio.powerDown();
+    delay(1000);
+    radio.powerUp();
+    Serial.println("ME: " + message);
+    return 1;
+  }
+  return 0;
 }
 
 /*void receberMensagem2() {
@@ -111,7 +107,7 @@ int enviarMensagem(String message) {
     radio.startListening();
     printf("Resposta enviada: %c\n", otraLetra);
   }
-  }*/
+}*/
 
 int receberMensagem() {
   int messageLength = 12;
@@ -130,7 +126,7 @@ int receberMensagem() {
         Serial.println("HIM: " + theMessage);
         finish = true;
       }
-    } else {
+    }else{
       finish = true;
     }
     return 1;

@@ -1,13 +1,13 @@
 #include <SPI.h>
-#include <nRF24L01.h>
-#include <RF24.h>
+#include "nRF24L01.h"
+#include "RF24.h"
 #include <printf.h>
 
 RF24 radio(7, 8);
 
 int msg[1];
 
-int arduino = 0;
+int arduino = 1;
 byte endereco[][6] = {"COM4", "COM5"};
 
 void setup() {
@@ -74,22 +74,24 @@ void loop() {
 
 int enviarMensagem(String message) {
   int msgSize = message.length();
+  printf("entrei no enviar\n");
   for (int i = 0; i < msgSize; i++) {
+    printf("tou no for em %\n",i);
     int charToSend[1];
     charToSend[0] = message.charAt(i);
     radio.stopListening();
     radio.write(charToSend, sizeof(charToSend));       
   }
-  
+  printf("sair do for\n");
   msg[0] = 2;
-  if (radio.write(msg, sizeof(msg))) {
-    radio.powerDown();
-    delay(1000);
-    radio.powerUp();
-    Serial.println("ME: " + message);
-    return 1;
-  }
-  return 0;
+  radio.write(msg, sizeof(msg));
+  printf("entrei no if\n");
+  radio.powerDown();
+  delay(1000);
+  radio.powerUp();
+  Serial.println("ME: " + message);
+    
+  return 1;
 }
 
 /*void receberMensagem2() {
