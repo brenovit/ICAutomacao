@@ -1,11 +1,9 @@
 #include <SPI.h>
-#include "nRF24L01.h"
-#include "RF24.h"
+#include <nRF24L01.h>
+#include <RF24.h>
 #include <printf.h>
 
 RF24 radio(7, 8);
-
-int msg[1];
 
 int arduino = 1;
 byte endereco[][6] = {"COM4", "COM5"};
@@ -26,25 +24,24 @@ void setup() {
     radio.openReadingPipe(1, endereco[1]);  //Pt1 -> end. de recebimento do outro
   }
 
-  //radio.startListening(); //inicia a troca de dados
-  radio.printDetails(); //mostra os detalhes do equipamento.
+  radio.startListening(); //inicia a troca de dados
+  //radio.printDetails(); //mostra os detalhes do equipamento.
   printf("Pronto...\n");
 }
 
 void loop() {
-  if (Serial.available()) {
-    String texto = Serial.readString();
+  if (Serial.available()){
+    char texto = Serial.read();
     if (!enviarMensagem(texto)) {
       printf("Falha ao enviar a mensagem!\n");
     }
     texto = "";
-    if(!receberMensagem()){
-      printf("Falha ao receber a mensagem!\n");
-    }
   }
+  receberMensagem();
 }
 
-/*void enviarMensagem2() {
+/*
+  void enviarMensagem2() {
   radio.stopListening();                             // primeiro, para de ouvir para começar a falar
 
   if (!radio.write(letra, sizeof(letra))) { // se não conseguir enviar o dado
@@ -70,46 +67,29 @@ void loop() {
     radio.read(&dadoRecebido, sizeof(dadoRecebido));
     printf("Enviei: %c e Recebi: %c\n", letra, dadoRecebido);
   }
-}*/
-
-int enviarMensagem(String message) {
-  int msgSize = message.length();
-  printf("entrei no enviar\n");
-  for (int i = 0; i < msgSize; i++) {
-    printf("tou no for em %\n",i);
-    int charToSend[1];
-    charToSend[0] = message.charAt(i);
-    radio.stopListening();
-    radio.write(charToSend, sizeof(charToSend));       
   }
-  printf("sair do for\n");
-  msg[0] = 2;
-  radio.write(msg, sizeof(msg));
-  printf("entrei no if\n");
-  radio.powerDown();
-  delay(1000);
-  radio.powerUp();
-  Serial.println("ME: " + message);
-    
+*/
+
+int enviarMensagem(char message) {
+  radio.stopListening();
+  radio.write(&message, sizeof(message));
+  printf("\nME: %c", message);
+  delay(300);
+  radio.startListening();
   return 1;
 }
 
-/*void receberMensagem2() {
+void receberMensagem() {
   unsigned char dadoRecebido;
-  if (radio.available()) {
-    while (radio.available()) {
+  if (radio.available()){
+    while (radio.available()){ 
       radio.read(&dadoRecebido, sizeof(dadoRecebido));
+      printf("\nHIM: %c",dadoRecebido);
     }
-
-    radio.stopListening();
-    unsigned char otraLetra = 'a';
-    radio.write(&otraLetra, sizeof(otraLetra));
-    radio.startListening();
-    printf("Resposta enviada: %c\n", otraLetra);
   }
-}*/
+}
 
-int receberMensagem() {
+/* int receberMensagem() {
   int messageLength = 12;
   int msg[1];
   int lastmsg = 1;
@@ -132,4 +112,5 @@ int receberMensagem() {
     return 1;
   }
   return 0;
-}
+  }
+*/
