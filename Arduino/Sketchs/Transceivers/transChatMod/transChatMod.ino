@@ -6,7 +6,7 @@
 RF24 radio(7, 8);
 
 int arduino = 1;
-byte endereco[][6] = {"COM4", "COM5"};
+byte endereco[][6] = {"Arduino1", "Arduino2"};
 
 void setup() {
   Serial.begin(9600);
@@ -30,87 +30,76 @@ void setup() {
 }
 
 void loop() {
-  if (Serial.available()){
-    char texto = Serial.read();
-    if (!enviarMensagem(texto)) {
-      printf("Falha ao enviar a mensagem!\n");
+  if (Serial.available()) {         //verifica se o buffer do Serial esta disponivel
+    while (Serial.available()) {    //enquanto o buffer do serial estiver diponivel
+      char texto = Serial.read();   //o primeiro 1 byte do serial é armazenado na variavel texto, do tipo char
+      /* a rotina vai executar a função de enviar dados pelo transceiver 'enviarMensagem(char dado)'
+         a qual retorna 1 caso consiga enviar ou 0, caso não consiga
+         caso aconteça algum erro, uma mensagem de erro é mostrada na tela
+      */      
+        if (!enviarMensagem(texto)) {
+        printf("\nFalha ao enviar a mensagem!");
+        }
+        texto = "";  
     }
-    texto = "";
   }
+  /* a partir do momento que o transceiver não tiver mais dados para ler
+     o arduino estará continuamente verificação se o outro arduino esta enviando algum dado
+     por meio da função receberMensagem();
+  */
   receberMensagem();
 }
 
 /*
-  void enviarMensagem2() {
-  radio.stopListening();                             // primeiro, para de ouvir para começar a falar
-
-  if (!radio.write(letra, sizeof(letra))) { // se não conseguir enviar o dado
-    printf("Dado não foi enviado\n");
-  }
-
-  radio.startListening();                            // agora ele ouve.
-
-  unsigned long tempo_inicio = micros();             // cria uma variavel que vai receber o tempo que ele iniciou em microsegundos
-  boolean tempoAcabou = false;                       // cria uma variavel que vai indicar se recebeu ou não resposta
-
-  while (!radio.available()) {                       // Enquanto nada for recebido
-    if (micros() - tempo_inicio > 200000) {          // e o tempo de espera ultrapassar 200ms
-      tempoAcabou = true;                            // indica que o tempo experiou
-      break;                                         // e sai do loop
-    }
-  }
-
-  if (tempoAcabou) {
-    printf("O tempo de resposta expirou\n");
-  } else {
-    char dadoRecebido;
-    radio.read(&dadoRecebido, sizeof(dadoRecebido));
-    printf("Enviei: %c e Recebi: %c\n", letra, dadoRecebido);
-  }
-  }
+   Função: Enviar dados para outro transceiver
+   Parametro: variavel do tipo char
+   Retorno: booleano, true se conseguir enviar, false se der algum erro
 */
-
-int enviarMensagem(char message) {
+bool enviarMensagem(char message) {
+  /*
+     Para enviar um dado, primeiro o transceiver tem de para de receber dados (parar de ouvir)
+     em seguida, usa-se o metodo write para ler os dados enviados
+     tendo como parametros a variavel contendo o dado, passando como referência e o tamanho dessa variavel
+     retornando 1 para true e 0 para false,(conseguiu enviar e não conseguiu, respectivamente
+  */
   radio.stopListening();
-  radio.write(&message, sizeof(message));
-  printf("\nME: %c", message);
-  delay(300);
+  if (radio.write(&message, sizeof(message))) {
+    /*
+       caso consiga enviar,
+       mostra na tela a mensagem enviada
+       aguarda 300 milisegundos
+       volta a ouvir (receber dados) novamente
+       por fim retorna true
+    */
+    printf("\nEU: %c", message);
+    delay(300);
+    radio.startListening();
+    return true;
+  }
+  /*
+     caso não consiga
+     volta a ouvir
+     retornando falso
+  */
   radio.startListening();
-  return 1;
+  return false;
 }
 
-void receberMensagem() {
-  unsigned char dadoRecebido;
-  if (radio.available()){
-    while (radio.available()){ 
-      radio.read(&dadoRecebido, sizeof(dadoRecebido));
-      printf("\nHIM: %c",dadoRecebido);
-    }
-  }
-}
-
-/* int receberMensagem() {
-  int messageLength = 12;
-  int msg[1];
-  int lastmsg = 1;
-  String theMessage = "";
-  bool finish = false;
-  radio.startListening();
-  while (!finish) {
-    if (radio.available()) {
-      radio.read(msg, sizeof(msg));
-      char theChar = msg[0];
-      if (msg[0] != 2) {
-        theMessage.concat(theChar);
-      } else {
-        Serial.println("HIM: " + theMessage);
-        finish = true;
-      }
-    }else{
-      finish = true;
-    }
-    return 1;
-  }
-  return 0;
-  }
+/*
+   Função: Receber dados de outro transceiver
+   Parametro: nenhum
+   Retorno: nenhum
 */
+void receberMensagem() {
+  char dadoRecebido;        //variavel que irá armazenar o dado recebido
+  if (radio.available()) {  //verifica se o transceiver esta disponivel
+    while (radio.available()) {   //enquanto ele se manter neste estado
+      /*
+         o transceiver irá executar o metodo read
+         tendo como parametro a variavel que vai armazenar o dado lido, como referência, e o tamanho desse dado
+      */
+      radio.read(&dadoRecebido, sizeof(dadoRecebido));
+      printf("\nOUTRO: %c", dadoRecebido);      //mostra o dado lido na tela
+    }
+  }
+}
