@@ -7,7 +7,7 @@ RF24 radio(7, 8);
 
 int arduino = 1;
 byte endereco[][6] = {"Arduino1", "Arduino2"};
-const int dataToFinish = 2;
+char dataToFinish = '2';
 
 void setup() {
   Serial.begin(9600);
@@ -87,16 +87,17 @@ bool enviarDado(String theMessage) {
 void receberDado() {
   String theMessage = "";
   bool theEnd = false;
-  int msg;
+  //int msg;
+  char msg;
   while (!theEnd) {
     if (radio.available()) {
       while (radio.available()) {
         radio.read(&msg, sizeof(msg));
-        char theChar = msg;
-        Serial.print("theChar: ");
-        Serial.println(theChar);
-        if (msg != 2) {
-          theMessage.concat(theChar);
+        //char theChar = msg;
+        //Serial.print("theChar: ");
+        //Serial.println(theChar);
+        if (msg != '2') {
+          theMessage.concat(msg);
         } else {
           printf("OUTRO: ");
           Serial.println(theMessage);
