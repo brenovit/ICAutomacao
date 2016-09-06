@@ -32,21 +32,9 @@ void loop() {
   //sensorPir();
   
   if(Serial.available()){
-    String letra = Serial.readString();
+    char letra = Serial.read();
     Serial.println("Comando: "+letra);    
-    if(letra == "oa"){
-      ligar(A);     
-    }else if(letra == "ob"){
-      ligar(B);     
-    }else if(letra == "oc"){
-      ligar(C);     
-    }else if(letra == "ba"){
-      desligar(A);     
-    }else if(letra == "bb"){
-      desligar(B);     
-    }else if(letra == "bc"){
-      desligar(C);     
-    }    
+    checarCodigo(letra);      
   }
   /*if(sensorPir() == true){
     ativar(A);
@@ -55,6 +43,23 @@ void loop() {
   }else{
       desativar(A);
   }*/   
+}
+void checarCodigo(char codigo){
+    if(codigo == 'a'){
+      ligar(A);     
+    }else if(codigo == 'b'){
+      ligar(B);     
+    }else if(codigo == 'c'){
+      ligar(C);     
+    }else if(codigo == 'd'){
+      desligar(A);     
+    }else if(codigo == 'e')
+    {
+      desligar(B);  
+    }else if(codigo == 'f'){
+      desligar(C);
+    }
+    printf("\nCOM3 recebeu: %c",codigo);
 }
 
 void ligar(int pino){

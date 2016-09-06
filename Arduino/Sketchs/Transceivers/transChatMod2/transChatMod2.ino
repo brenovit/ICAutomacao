@@ -3,6 +3,12 @@
 #include <RF24.h>
 #include <printf.h>
 
+int A = 4;
+int B = 5;
+int C = 6;
+
+#define pir 3
+
 RF24 radio(7, 8);
 
 int arduino = 0;
@@ -27,6 +33,9 @@ void setup() {
 
   radio.startListening(); //inicia a troca de dados
   //radio.printDetails(); //mostra os detalhes do equipamento.
+  pinMode(A, OUTPUT);
+  pinMode(B, OUTPUT);
+  pinMode(C, OUTPUT);
   printf("Pronto...\n");
 }
 
@@ -39,7 +48,7 @@ void loop() {
          caso aconteça algum erro, uma mensagem de erro é mostrada na tela
       */      
         if (!enviarMensagem(texto)) {
-        printf("\nFalha ao enviar a mensagem!");
+          printf("\nFalha ao enviar a mensagem!");
         }
         texto = "";  
     }
@@ -99,8 +108,34 @@ void receberMensagem() {
          o transceiver irá executar o metodo read
          tendo como parametro a variavel que vai armazenar o dado lido, como referência, e o tamanho desse dado
       */
-      radio.read(&dadoRecebido, sizeof(dadoRecebido));
+      radio.read(&dadoRecebido, sizeof(dadoRecebido));      
+      checarCodigo(dadoRecebido);
       printf("\nOUTRO: %c", dadoRecebido);      //mostra o dado lido na tela
     }
   }
+}
+
+void checarCodigo(char codigo){
+    if(codigo == "a"){
+      ligar(A);     
+    }else if(codigo == "b"){
+      ligar(B);     
+    }else if(codigo == "c"){
+      ligar(C);     
+    }else if(codigo == "d"){
+      desligar(A);     
+    }else if(codigo == "e"){
+      desligar(B);  
+    }else if(codigo == "f"){
+      desligar(C);
+    }
+    printf("COM4 recebeu: %c",codigo);
+}
+
+void ligar(int pino){
+  digitalWrite(pino, HIGH); 
+}
+
+void desligar(int pino){
+  digitalWrite(pino, LOW); 
 }
