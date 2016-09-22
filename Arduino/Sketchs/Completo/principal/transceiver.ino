@@ -1,13 +1,16 @@
 #include "header.h"
 
 void checarCodigo(char codigo){
+  //manda ligar as lampadas
     if(codigo == "a"){
       ligarLampada(lampada1);     
     }else if(codigo == "b"){
       ligarLampada(lampada2);  
     }else if(codigo == "c"){
       ligarLampada(lampada3);
-    }else if(codigo == "d"){
+    }
+    //manda desligar as lampadas
+    else if(codigo == "d"){
       desligarLampada(lampada1);
     }else if(codigo == "e"){
       desligarLampada(lampada2);

@@ -106,7 +106,6 @@ void lerSerial(){
 }
 /*void sensorPir(){
   val = digitalRead(pir);
-  sec++;
   if(val == HIGH){
     irsend.sendPanasonic(0x4004, volu); // Sony TV power code
   }else{
