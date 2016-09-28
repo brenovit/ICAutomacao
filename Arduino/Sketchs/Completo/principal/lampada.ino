@@ -1,6 +1,6 @@
 #include "header.h"
 
-int mVperAmp = 66; 
+int mVperAmp = 185; 
 int RawValue = 0;
 int ACSoffset = 2500;
 double Voltage = 0;
