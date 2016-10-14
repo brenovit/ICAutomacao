@@ -8,8 +8,8 @@ Durante o processo de testes a equipe se compromete em criar tutorias de como mo
 
 Componentes: 
 
-Bianca Marques
+Bianca Marques - https://github.com/BiancaMarques
 
 Breno Arantes - https://github.com/brenovit
 
-Priscila Santos
+Priscila Santos - https://github.com/PriscilaSilvaSantos
