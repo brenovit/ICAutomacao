@@ -1,24 +1,5 @@
 #include "header.h"
 
-void checarCodigo(char codigo){  //manda ligar as lampadas
-    if(codigo == "a"){
-      ligarLampada(lampada1);     
-    }else if(codigo == "b"){
-      ligarLampada(lampada2);  
-    }else if(codigo == "c"){
-      ligarLampada(lampada3);
-    }
-    //manda desligar as lampadas
-    else if(codigo == "d"){
-      desligarLampada(lampada1);
-    }else if(codigo == "e"){
-      desligarLampada(lampada2);
-    }else if(codigo == "f"){
-      desligarLampada(lampada3);
-    }
-    printf("\nCOM3 recebeu: %c",codigo);
-}
-
 /*
    Função: Enviar dados para outro transceiver
    Parametro: variavel do tipo char
@@ -61,7 +42,7 @@ bool enviarMensagem(char message) {
    Parametro: nenhum
    Retorno: nenhum
 */
-char receberMensagem() {
+void receberMensagem() {
   char dadoRecebido;        //variavel que irá armazenar o dado recebido
   if (radio.available()) {  //verifica se o transceiver esta disponivel
     while (radio.available()) {   //enquanto ele se manter neste estado
@@ -71,8 +52,7 @@ char receberMensagem() {
       */
       radio.read(&dadoRecebido, sizeof(dadoRecebido));
       checarCodigo(dadoRecebido);
-     // printf("\nOUTRO: %c", dadoRecebido);      //mostra o dado lido na tela
-     return dadoRecebido;
+      printf("\nOUTRO: %c", dadoRecebido);      //mostra o dado lido na tela
     }
   }
 }

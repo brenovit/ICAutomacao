@@ -16,7 +16,7 @@ void desligarLampada(int pino){
   //informar que a lampada pino, foi desligada
 }
 
-int estaLigado(int pino){
+int temPulso(int pino){
   return digitalRead(pino);
   //informar que a lampada pino está ligada
 }

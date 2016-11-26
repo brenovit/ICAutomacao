@@ -15,9 +15,12 @@
 
 void ligarLampada(int lampada);
 void desligarLampada(int lampada);
-int estaLigado(int lampada);
+
+int temPulso(int lampada);
 
 bool temGente(int pir);
 
 bool enviarMensagem(char message);
-char receberMensagem();
+void receberMensagem();
+
+void checarCodigo(char codigo);

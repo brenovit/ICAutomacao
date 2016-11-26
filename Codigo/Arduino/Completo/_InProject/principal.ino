@@ -4,9 +4,12 @@ RF24 radio(7, 8);
 int arduino = 2;
 byte endereco[][6] = {"Arduino1", "Arduino2"};
 
-int sCorrente1Var = 0;
-int sCorrente2Var = 0;
-int sCorrente3Var = 0;
+bool lamp1On = false;
+bool lamp2On = false;
+bool lamp3On = false;
+
+bool pulso2 = false;
+int gente1 = false;
 
 void setup() {
   Serial.begin(9600);
@@ -32,17 +35,40 @@ void setup() {
 }
 
 void loop() {
-  /*int val = estaLigado(sCorrente1);
-  Serial.print("Ligado: ");
-  Serial.println(val);
-  delay(2000);
-  int temGente = temGente(SPir1);
-  Serial.print("Tem Gente: ");
-  Serial.println(temGente);*/
-  /*int var1 = temGente(SPir1);
-  int var2 = estaLigado(sCorrente1);
-  delay(2000);  
-  if(var1){
+//  int val = estaLigado(sCorrente1);
+  //delay(2000);
+  gente1 = temGente(SPir1);
+
+  
+  //cenario 1
+  /* não tem ninguem na sala, o sensor percebe movimento
+   * verifica se os equipamentos estão ligados
+   * não estando: liga todos eles e altera o estado logicamente
+   * se não tiver movimento: 
+   */
+
+  if(temPulso(sCorrente2)){
+    pulso2 = true;
+  }else{
+    pulso2 = false;
+  }  
+  
+  if(gente1){ //se tiver pessoa -. ligar a porra toda
+    if(!lamp2On){ //SE A lampada tiver desligada
+      ligarLampada(lampada2);
+      lamp2On = true;
+    }    
+  }else{
+    //tempo de contagem
+    if(lamp2On){
+      desligarLampada(lampada2);
+      lamp2On = false;
+    }   
+  } 
+  
+  //delay(2000);  
+  
+  /*if(var1){
     Serial.println("Tem Gente!");
     if(sCorrente1Var == 0 || var2 == 0){
       ligarLampada(lampada2);
@@ -56,6 +82,7 @@ void loop() {
     Serial.println("Não tem Gente!");
     desligarLampada(lampada2);
   }*/
+  
   if (Serial.available()) {         //verifica se o buffer do Serial esta disponivel
     while (Serial.available()) {    //enquanto o buffer do serial estiver diponivel
       /* a rotina vai executar a função de enviar dados pelo transceiver 'enviarMensagem(char dado)'
@@ -74,4 +101,32 @@ void loop() {
      por meio da função receberMensagem();
   */
   receberMensagem();
+
+  
+  
+}
+
+void checarCodigo(char codigo){  //manda ligar as lampadas
+    if(codigo == 'a'){
+      ligarLampada(lampada1);
+    }else if(codigo == 'b'){
+      if(!lamp2On){
+        ligarLampada(lampada2);
+        lamp2On = true;
+      }  
+    }else if(codigo == 'c'){
+      ligarLampada(lampada3);
+    }
+    //manda desligar as lampadas
+    else if(codigo == 'd'){
+      desligarLampada(lampada1);
+    }else if(codigo == 'e'){
+      if(lamp2On){
+        desligarLampada(lampada2);
+        lamp2On = false;
+      }
+    }else if(codigo == 'f'){
+      desligarLampada(lampada3);
+    }
+    printf("\nCOM3 recebeu: %c",codigo);
 }
